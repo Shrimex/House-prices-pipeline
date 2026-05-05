@@ -1,0 +1,13 @@
+{
+    "best_cv_model": "catboost",
+    "best_cv_RMSE": 0.12629318023749678,
+    "best_cv_r_square": 0.8977076881336365,
+    "selected_final_model": "catboost",
+    "best_params": {
+        "depth": 6,
+        "iterations": 300,
+        "l2_leaf_reg": 5,
+        "learning_rate": 0.1
+    },
+    "best_search_RMSE": 0.12345047816037966
+}
