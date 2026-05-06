@@ -11,7 +11,7 @@ from src.neural_network import HousePricesNN
 
 
 def get_models(random_state: int = 42) -> dict:
-
+    '''Список моделей для решения задачи регрессии'''
     models = {
         "dummy_regressor": DummyRegressor(strategy='median'),
 

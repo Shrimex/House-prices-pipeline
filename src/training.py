@@ -12,6 +12,26 @@ from src.utils import ensure_dir, save_dataframe, save_json
 from sklearn.model_selection import KFold
 
 def run_training_pipeline(config):
+    ''' Полный пайплайн обучения от загрузки данных до сохранения результатов.
+
+    Шаги:
+    1. Загрузка train/test, логарифмирование target.
+    2. Preprocessing: feature engineering, imputation, encoding.
+    3. CV-оценка всех дефолтных моделей по RMSE и R².
+    4. GridSearchCV для каждой модели из param_grids —
+       поиск лучших гиперпараметров, refit на полном train.
+    5. Формирование сабмита с обратным преобразованием target (expm1).
+    6. Сохранение метрик, модели и сабмита согласно конфигу.
+
+    Параметры
+    ----------
+    config : OmegaConf
+        Конфигурация проекта. Ожидаемые ключи:
+        - config.paths.outputs.{metrics, models, submissions}
+        - config.general.{id_col, target_col, seed}
+        - config.cross_validation.n_folds
+        - config.saving.{save_metrics, save_model, save_submission}'''
+    
     metrics_dir     = Path(config.paths.outputs.metrics)
     models_dir      = Path(config.paths.outputs.models)
     submissions_dir = Path(config.paths.outputs.submissions)

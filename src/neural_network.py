@@ -26,6 +26,20 @@ _SCHEDULERS = {
 }
 
 class MLP(nn.Module):
+     
+    '''Многослойный перцептрон для регрессии.
+
+    Архитектура каждого скрытого слоя: Linear → BatchNorm1d → ReLU → Dropout.
+    Выходной слой: Linear(hidden_dims[-1], 1) без активации.
+
+    Параметры
+    ----------
+    input_dim : int
+        Размерность входного вектора признаков.
+    hidden_dims : list[int]
+        Размеры скрытых слоёв, например [128, 64, 32].
+    dropout : float
+        Вероятность дропаута после каждого скрытого слоя.'''
     def __init__(self, input_dim: int, hidden_dims: list[int], dropout: float):
         super().__init__()
         dims = [input_dim]+hidden_dims
@@ -46,6 +60,40 @@ class MLP(nn.Module):
         return self.network(x)
 
 class HousePricesNN(BaseEstimator, RegressorMixin):
+    '''
+    Sklearn-совместимая обёртка вокруг MLP для задачи регрессии.
+
+    Встроенный StandardScaler масштабирует признаки внутри fit(),
+    что предотвращает утечку данных при кросс-валидации.
+    Поддерживает раннюю остановку по валидационным потерям.
+
+    Параметры
+    ----------
+    hidden_dims : list[int] or None
+        Размеры скрытых слоёв. По умолчанию [128, 64, 32].
+    dropout : float
+        Вероятность дропаута после каждого скрытого слоя.
+    lr : float
+        Скорость обучения оптимизатора.
+    epochs : int
+        Максимальное число эпох обучения.
+    batch_size : int
+        Размер мини-батча.
+    patience : int
+        Число эпох без улучшения до ранней остановки.
+    val_fraction : float
+        Доля train данных откладываемая для ранней остановки.
+    random_state : int
+        Зерно генератора случайных чисел.
+    optimizer : str
+        Оптимизатор: 'adam', 'sgd', 'rmsprop'.
+    criterion : str
+        Функция потерь: 'mse', 'mae', 'huber'.
+    scheduler : str or None
+        Планировщик lr: 'step', 'cosine', 'reduce_on_plateau' или None.
+    scheduler_kwargs : dict or None
+        Дополнительные параметры для scheduler.
+    '''
     def __init__(
         self,
         hidden_dims: list[int] | None = None,

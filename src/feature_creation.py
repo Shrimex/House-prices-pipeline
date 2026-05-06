@@ -19,5 +19,11 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
     df['HasBasement'] = (df['TotalBsmtSF'].fillna(0) > 0).astype(int)
     df['HasPool'] = (df['PoolArea'].fillna(0) > 0).astype(int)
     df['HasFireplace'] = (df['Fireplaces'].fillna(0) > 0).astype(int)
+    df['HasWoodDeck'] = (df['WoodDeckSF'] > 0).astype(int)
+    df['HasEnclosedPorch'] = (df['EnclosedPorch'] > 0).astype(int)
+    df['Has3SsnPorch'] = (df['3SsnPorch'] > 0).astype(int)
+    df['HasScreenPorch'] = (df['ScreenPorch'] > 0).astype(int)
+    df['HasLowQualFin'] = (df['LowQualFinSF'] > 0).astype(int)
+    df['HasMiscVal'] = (df['MiscVal'] > 0).astype(int)
 
     return df
