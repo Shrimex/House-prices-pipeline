@@ -13,7 +13,7 @@ def evaluate_models(
 ) -> pd.DataFrame:
 
     results = []
-
+    #вычисление метрик для каждой модели и сохранение в list для дальнейшего добавления DataFrame для сохранения и отображения
     for model_name, model in models.items():
         cv = KFold(n_splits=n_folds, shuffle=True, random_state=random_state)
         RMSE = cross_val_score(model, X, y, scoring='neg_root_mean_squared_error', cv=cv)
