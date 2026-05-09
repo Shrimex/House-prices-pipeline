@@ -6,6 +6,7 @@ from sklearn.tree import DecisionTreeRegressor
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
+from sklearn.ensemble import VotingRegressor, StackingRegressor
 
 from src.neural_network import HousePricesNN
 
@@ -118,6 +119,35 @@ def get_models(random_state: int = 42) -> dict:
                 "factor": 0.5,
                 "patience": 5
             },
+        ),
+                "voting": VotingRegressor(
+            estimators=[
+                ('lgb', LGBMRegressor(n_estimators=200, learning_rate=0.1, max_depth=6, random_state=random_state, verbose=-1)),
+                ('cat', CatBoostRegressor(iterations=200, learning_rate=0.1, depth=6, verbose=0, random_state=random_state)),
+                ('xgb', XGBRegressor(n_estimators=200, learning_rate=0.1, max_depth=6, random_state=random_state, verbosity=0)),
+            ]
+        ),
+
+        "stacking_ridge": StackingRegressor(
+            estimators=[
+                ('lgb', LGBMRegressor(n_estimators=200, learning_rate=0.1, max_depth=6, random_state=random_state, verbose=-1)),
+                ('cat', CatBoostRegressor(iterations=200, learning_rate=0.1, depth=6, verbose=0, random_state=random_state)),
+                ('xgb', XGBRegressor(n_estimators=200, learning_rate=0.1, max_depth=6, random_state=random_state, verbosity=0)),
+                ('rf',  RandomForestRegressor(n_estimators=100, max_depth=3, random_state=random_state)),
+            ],
+            final_estimator=Ridge(),
+            cv=5,
+        ),
+
+        "stacking_lasso": StackingRegressor(
+            estimators=[
+                ('lgb', LGBMRegressor(n_estimators=200, learning_rate=0.1, max_depth=6, random_state=random_state, verbose=-1)),
+                ('cat', CatBoostRegressor(iterations=200, learning_rate=0.1, depth=6, verbose=0, random_state=random_state)),
+                ('xgb', XGBRegressor(n_estimators=200, learning_rate=0.1, max_depth=6, random_state=random_state, verbosity=0)),
+                ('rf',  RandomForestRegressor(n_estimators=100, max_depth=3, random_state=random_state)),
+            ],
+            final_estimator=Lasso(max_iter=5000),
+            cv=5,
         ),
     }
     return models
